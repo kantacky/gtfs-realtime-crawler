@@ -7,7 +7,21 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func FetchData(url string) ([]byte, error) {
+func GetMessage(url string) (*FeedMessage, error) {
+	data, err := fetchData(url)
+	if err != nil {
+		return nil, err
+	}
+
+	message, err := unmarshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return message, nil
+}
+
+func fetchData(url string) ([]byte, error) {
 	httpClient := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -28,7 +42,7 @@ func FetchData(url string) ([]byte, error) {
 	return body, nil
 }
 
-func Deserialize(data []byte) (*FeedMessage, error) {
+func unmarshal(data []byte) (*FeedMessage, error) {
 	message := &FeedMessage{}
 	err := proto.Unmarshal(data, message)
 	if err != nil {
