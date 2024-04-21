@@ -64,22 +64,24 @@ func checkFeed(url string) {
 	fmt.Println("| :-- | :-- | :-- | --: | :-- | :-- | :-- | :-- | :-- | :-- | :-- | --: | :-- | :-- |")
 
 	for _, entity := range message.Entity {
-		fmt.Printf(
-			"| %s | %s | %s | %d | %s | %s | %s | %s | %s | %f | %f | %d | %s | %s |\n",
-			entity.GetId(),
-			entity.Vehicle.Trip.GetTripId(),
-			entity.Vehicle.Trip.GetRouteId(),
-			entity.Vehicle.Trip.GetDirectionId(),
-			entity.Vehicle.Trip.GetStartTime(),
-			entity.Vehicle.Trip.GetStartDate(),
-			entity.Vehicle.Trip.GetScheduleRelationship(),
-			entity.Vehicle.Vehicle.GetId(),
-			entity.Vehicle.Vehicle.GetLabel(),
-			entity.Vehicle.Position.GetLatitude(),
-			entity.Vehicle.Position.GetLongitude(),
-			entity.Vehicle.GetCurrentStopSequence(),
-			entity.Vehicle.GetStopId(),
-			time.Unix(int64(entity.Vehicle.GetTimestamp()), 0).Format("2006-01-02T15:04:05+09:00"),
-		)
+		if entity.Vehicle != nil {
+			fmt.Printf(
+				"| %s | %s | %s | %d | %s | %s | %s | %s | %s | %f | %f | %d | %s | %s |\n",
+				entity.GetId(),
+				entity.Vehicle.Trip.GetTripId(),
+				entity.Vehicle.Trip.GetRouteId(),
+				entity.Vehicle.Trip.GetDirectionId(),
+				entity.Vehicle.Trip.GetStartTime(),
+				entity.Vehicle.Trip.GetStartDate(),
+				entity.Vehicle.Trip.GetScheduleRelationship(),
+				entity.Vehicle.Vehicle.GetId(),
+				entity.Vehicle.Vehicle.GetLabel(),
+				entity.Vehicle.Position.GetLatitude(),
+				entity.Vehicle.Position.GetLongitude(),
+				entity.Vehicle.GetCurrentStopSequence(),
+				entity.Vehicle.GetStopId(),
+				time.Unix(int64(entity.Vehicle.GetTimestamp()), 0).Format("2006-01-02T15:04:05+09:00"),
+			)
+		}
 	}
 }
