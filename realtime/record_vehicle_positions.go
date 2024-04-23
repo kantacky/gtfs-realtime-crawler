@@ -9,12 +9,7 @@ import (
 	"github.com/kantacky/gtfs-realtime-crawler/model"
 )
 
-func RecordVehiclePositions(url string, schemaName string) {
-	message, err := GetMessage(url)
-	if err != nil {
-		log.Println("GetMessage: ", err)
-	}
-
+func RecordVehiclePositions(message *FeedMessage, schemaName string) {
 	vehiclePositions := []model.VehiclePosition{}
 
 	for _, entity := range message.Entity {
