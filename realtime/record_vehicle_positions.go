@@ -19,22 +19,8 @@ func RecordVehiclePositions(url string, schemaName string) {
 
 	for _, entity := range message.Entity {
 		if entity.Vehicle != nil {
-			startDatetime := &time.Time{}
-			*startDatetime, err = time.Parse("2006-01-02T15:04:05-07:00", entity.Vehicle.Trip.GetStartDate()+"T"+entity.Vehicle.Trip.GetStartTime()+"+09:00")
-			if err != nil {
-				startDatetime = nil
-			} else {
-				*startDatetime = startDatetime.Local()
-			}
-
-			unixTime := entity.Vehicle.Timestamp
-			timestamp := &time.Time{}
-			if unixTime == nil {
-				timestamp = nil
-			} else {
-				*timestamp = time.Unix(int64(*unixTime), 0).Local()
-			}
-
+			startDatetime := lib.ParseISO8601(entity.Vehicle.Trip.GetStartDate() + "T" + entity.Vehicle.Trip.GetStartTime() + "+09:00")
+			timestamp := unixTime(entity.Vehicle.Timestamp)
 			coordinate := &model.Coordinate{
 				Latitude:  entity.Vehicle.Position.GetLatitude(),
 				Longitude: entity.Vehicle.Position.GetLongitude(),
@@ -57,6 +43,19 @@ func RecordVehiclePositions(url string, schemaName string) {
 		}
 	}
 
+	writeToDB(vehiclePositions, schemaName)
+}
+
+func unixTime(unixTime *uint64) *time.Time {
+	if unixTime == nil {
+		return nil
+	}
+	timestamp := &time.Time{}
+	*timestamp = time.Unix(int64(*unixTime), 0).Local()
+	return timestamp
+}
+
+func writeToDB(vehiclePositions []model.VehiclePosition, schemaName string) {
 	sqldb, err := lib.GetSQLDB()
 	if err != nil {
 		log.Println("lib.GetSQLDB: ", err)
