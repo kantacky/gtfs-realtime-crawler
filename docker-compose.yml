@@ -1,0 +1,43 @@
+services:
+  crawler:
+    build: .
+    environment:
+      DB_HOST_FILE: /run/secrets/db_host
+      DB_NAME_FILE: /run/secrets/db_name
+      DB_USER_FILE: /run/secrets/db_user
+      DB_PASS_FILE: /run/secrets/db_pass
+      DB_ROOT_CERT: /run/secrets/db_root_cert
+      DB_CERT: /run/secrets/db_cert
+      DB_KEY: /run/secrets/db_key
+      FEED_URL_FILE: /run/secrets/feed_url
+      AGENCY_ID_FILE: /run/secrets/agency_id
+    secrets:
+      - db_host
+      - db_name
+      - db_user
+      - db_pass
+      - db_root_cert
+      - db_cert
+      - db_key
+      - feed_url
+      - agency_id
+
+secrets:
+  db_host:
+    file: ./env/db_host.txt
+  db_name:
+    file: ./env/db_name.txt
+  db_user:
+    file: ./env/db_user.txt
+  db_pass:
+    file: ./env/db_pass.txt
+  db_root_cert:
+    file: ./cert/server-ca.pem
+  db_cert:
+    file: ./cert/client-cert.pem
+  db_key:
+    file: ./cert/client-key.pem
+  feed_url:
+    file: ./env/feed_url.txt
+  agency_id:
+    file: ./env/agency_id.txt

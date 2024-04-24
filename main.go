@@ -6,28 +6,31 @@ import (
 	"strings"
 	"time"
 
-	"github.com/joho/godotenv"
+	"github.com/kantacky/gtfs-realtime-crawler/lib"
 	"github.com/kantacky/gtfs-realtime-crawler/realtime"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("godotenv.Load error:", err)
-	}
-
 	var (
-		url             = flag.String("u", "", "GTFS Realtime feed URL")
-		agencyID        = flag.String("a", "", "Agency ID (UUID)")
-		intervalSeconds = flag.Int("i", 15, "Interval seconds")
+		url             = flag.String("url", "", "GTFS Realtime feed URL")
+		agencyID        = flag.String("agency", "", "Agency ID (UUID)")
+		intervalSeconds = flag.Int("interval", 15, "Interval seconds")
 	)
 	flag.Parse()
 
 	if *url == "" {
-		panic("url is required")
+		if lib.GetenvFromSecretfile("FEED_URL") != "" {
+			*url = lib.GetenvFromSecretfile("FEED_URL")
+		} else {
+			panic("url is required")
+		}
 	}
 	if *agencyID == "" {
-		panic("agency is required")
+		if lib.GetenvFromSecretfile("AGENCY_ID") != "" {
+			*agencyID = lib.GetenvFromSecretfile("AGENCY_ID")
+		} else {
+			panic("agency is required")
+		}
 	}
 
 	schemaName := strings.ReplaceAll(*agencyID, "-", "")
@@ -40,13 +43,22 @@ func main() {
 			log.Println("realtime.GetMessage: ", err)
 		}
 
-		timestamp := time.Unix(int64(*message.Header.Timestamp), 0)
-		if lastChangedAt == nil || *lastChangedAt != timestamp {
-			lastChangedAt = &timestamp
+		timestamp := unixTime(message.Header.Timestamp)
+		if lastChangedAt == nil || (timestamp != nil && *lastChangedAt != *timestamp) {
+			lastChangedAt = timestamp
 			realtime.RecordVehiclePositions(message, "a"+schemaName)
 			log.Println("Recorded")
 		}
 
 		time.Sleep(time.Duration(*intervalSeconds) * time.Second)
 	}
+}
+
+func unixTime(unixTime *uint64) *time.Time {
+	if unixTime == nil {
+		return nil
+	}
+	timestamp := &time.Time{}
+	*timestamp = time.Unix(int64(*unixTime), 0).Local()
+	return timestamp
 }
