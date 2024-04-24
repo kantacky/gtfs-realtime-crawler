@@ -6,4 +6,4 @@ install:
 	go mod tidy
 
 proto:
-	protoc -I=./proto --go_out=./realtime --go_opt=paths=source_relative ./proto/gtfs-realtime.proto
+	protoc -I=./proto --go_out=./crawler --go_opt=paths=source_relative ./proto/gtfs-realtime.proto

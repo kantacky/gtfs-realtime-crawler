@@ -23,7 +23,7 @@
 // https://github.com/google/transit/tree/master/gtfs-realtime
 
 syntax = "proto2";
-option go_package = "github.com/kantacky/gtfs-realtime-crawler/proto/realtime";
+option go_package = "github.com/kantacky/gtfs-realtime-crawler/crawler";
 package transit_realtime;
 
 // The contents of a feed message.

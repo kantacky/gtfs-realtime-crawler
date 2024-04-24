@@ -1,4 +1,4 @@
-package realtime
+package crawler
 
 import "google.golang.org/protobuf/proto"
 

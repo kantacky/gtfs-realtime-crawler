@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kantacky/gtfs-realtime-crawler/crawler"
 	"github.com/kantacky/gtfs-realtime-crawler/lib"
-	"github.com/kantacky/gtfs-realtime-crawler/realtime"
 )
 
 func main() {
@@ -39,15 +39,15 @@ func main() {
 
 	for {
 		go func() {
-			message, err := realtime.GetMessage(*url)
+			message, err := crawler.GetMessage(*url)
 			if err != nil {
-				log.Println("realtime.GetMessage:", err)
+				log.Println("crawler.GetMessage:", err)
 			}
 
 			timestamp := unixTime(message.Header.Timestamp)
 			if lastChangedAt == nil || (timestamp != nil && *lastChangedAt != *timestamp) {
 				lastChangedAt = timestamp
-				realtime.RecordVehiclePositions(message, "a"+schemaName)
+				crawler.RecordVehiclePositions(message, "a"+schemaName)
 			}
 		}()
 

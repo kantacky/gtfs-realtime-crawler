@@ -1,4 +1,4 @@
-package realtime
+package crawler
 
 func GetMessage(url string) (*FeedMessage, error) {
 	data, err := FetchData(url)
