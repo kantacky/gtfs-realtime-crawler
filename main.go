@@ -38,17 +38,18 @@ func main() {
 	var lastChangedAt *time.Time
 
 	for {
-		message, err := realtime.GetMessage(*url)
-		if err != nil {
-			log.Println("realtime.GetMessage: ", err)
-		}
+		go func() {
+			message, err := realtime.GetMessage(*url)
+			if err != nil {
+				log.Println("realtime.GetMessage:", err)
+			}
 
-		timestamp := unixTime(message.Header.Timestamp)
-		if lastChangedAt == nil || (timestamp != nil && *lastChangedAt != *timestamp) {
-			lastChangedAt = timestamp
-			realtime.RecordVehiclePositions(message, "a"+schemaName)
-			log.Println("Recorded")
-		}
+			timestamp := unixTime(message.Header.Timestamp)
+			if lastChangedAt == nil || (timestamp != nil && *lastChangedAt != *timestamp) {
+				lastChangedAt = timestamp
+				realtime.RecordVehiclePositions(message, "a"+schemaName)
+			}
+		}()
 
 		time.Sleep(time.Duration(*intervalSeconds) * time.Second)
 	}

@@ -9,6 +9,8 @@ import (
 	"github.com/kantacky/gtfs-realtime-crawler/model"
 )
 
+const rangeMinutes = 15
+
 func RecordVehiclePositions(message *FeedMessage, schemaName string) {
 	vehiclePositions := []model.VehiclePosition{}
 
@@ -53,16 +55,47 @@ func unixTime(unixTime *uint64) *time.Time {
 func writeToDB(vehiclePositions []model.VehiclePosition, schemaName string) {
 	sqldb, err := lib.GetSQLDB()
 	if err != nil {
-		log.Println("lib.GetSQLDB: ", err)
+		log.Println("lib.GetSQLDB:", err)
 	}
 	defer sqldb.Close()
 
 	gormdb, err := lib.GetGORMDB(sqldb)
 	if err != nil {
-		log.Println("lib.GetGORMDB: ", err)
+		log.Println("lib.GetGORMDB:", err)
 	}
 
-	if err := gormdb.Table(fmt.Sprintf("%s.vehicle_positions", schemaName)).Create(vehiclePositions).Error; err != nil {
-		log.Println("db.Create: ", err)
+	var records []model.VehiclePosition
+	if err := gormdb.Table(fmt.Sprintf("%s.vehicle_positions", schemaName)).Where("timestamp > ?", time.Now().Add(-rangeMinutes*time.Minute)).Find(&records).Error; err != nil {
+		log.Println("gormdb.Where:", err)
 	}
+
+	filteredVehiclePositions := []model.VehiclePosition{}
+	flag := false
+	for _, vehiclePosition := range vehiclePositions {
+		if vehiclePosition.VehicleID == nil || vehiclePosition.Timestamp == nil {
+			continue
+		}
+		for _, record := range records {
+			if *vehiclePosition.VehicleID == *record.VehicleID && *vehiclePosition.Timestamp == *record.Timestamp {
+				flag = true
+				break
+			}
+		}
+		if !flag {
+			filteredVehiclePositions = append(filteredVehiclePositions, vehiclePosition)
+		}
+		flag = false
+	}
+
+	if err := gormdb.Table(fmt.Sprintf("%s.vehicle_positions", schemaName)).Create(filteredVehiclePositions).Error; err != nil {
+		log.Println("db.Create:", err)
+	}
+
+	log.Printf(
+		"Recorded: %d records added, %d duplicated records are in %d records recorded in %d minutes\n",
+		len(filteredVehiclePositions),
+		len(vehiclePositions)-len(filteredVehiclePositions),
+		len(records),
+		rangeMinutes,
+	)
 }
