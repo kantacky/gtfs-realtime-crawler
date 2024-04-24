@@ -1,6 +1,7 @@
 services:
   crawler:
     build: .
+    restart: always
     environment:
       DB_HOST_FILE: /run/secrets/db_host
       DB_NAME_FILE: /run/secrets/db_name
