@@ -1,9 +1,12 @@
 package crawler
 
-import "google.golang.org/protobuf/proto"
+import (
+	"github.com/kantacky/apis-go/transit_realtime"
+	"google.golang.org/protobuf/proto"
+)
 
-func Unmarshal(data []byte) (*FeedMessage, error) {
-	message := &FeedMessage{}
+func Unmarshal(data []byte) (*transit_realtime.FeedMessage, error) {
+	message := &transit_realtime.FeedMessage{}
 	err := proto.Unmarshal(data, message)
 	if err != nil {
 		return nil, err

@@ -1,6 +1,8 @@
 package crawler
 
-func GetMessage(url string) (*FeedMessage, error) {
+import "github.com/kantacky/apis-go/transit_realtime"
+
+func GetMessage(url string) (*transit_realtime.FeedMessage, error) {
 	data, err := FetchData(url)
 	if err != nil {
 		return nil, err

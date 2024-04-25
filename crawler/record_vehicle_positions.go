@@ -5,13 +5,14 @@ import (
 	"log"
 	"time"
 
+	"github.com/kantacky/apis-go/transit_realtime"
 	"github.com/kantacky/gtfs-realtime-crawler/lib"
 	"github.com/kantacky/gtfs-realtime-crawler/model"
 )
 
 const rangeMinutes = 15
 
-func RecordVehiclePositions(message *FeedMessage, schemaName string) {
+func RecordVehiclePositions(message *transit_realtime.FeedMessage, schemaName string) {
 	vehiclePositions := []model.VehiclePosition{}
 
 	for _, entity := range message.Entity {

@@ -5,15 +5,15 @@ import (
 )
 
 type VehiclePosition struct {
-	TripID               *string     `gorm:"type:varchar(255)"`
-	RouteID              *string     `gorm:"type:varchar(255)"`
-	DirectionID          *uint32     `gorm:"type:integer"`
-	StartDatetime        *time.Time  `gorm:"type:timestamp with time zone"`
-	ScheduleRelationship *string     `gorm:"type:varchar(255)"`
-	VehicleID            *string     `gorm:"type:varchar(255)"`
-	VehicleLabel         *string     `gorm:"type:varchar(255)"`
-	VehiclePosition      *Coordinate `gorm:"type:point"`
-	CurrentStopSequence  *uint32     `gorm:"type:integer"`
-	StopID               *string     `gorm:"type:varchar(255)"`
-	Timestamp            *time.Time  `gorm:"type:timestamp with time zone"`
+	TripID               *string     `gorm:"column:trip_id"`
+	RouteID              *string     `gorm:"column:route_id"`
+	DirectionID          *uint32     `gorm:"column:direction_id"`
+	StartDatetime        *time.Time  `gorm:"column:start_datetime"`
+	ScheduleRelationship *string     `gorm:"column:schedule_relationship"`
+	VehicleID            *string     `gorm:"column:vehicle_id"`
+	VehicleLabel         *string     `gorm:"column:vehicle_label"`
+	VehiclePosition      *Coordinate `gorm:"column:vehicle_position"`
+	CurrentStopSequence  *uint32     `gorm:"column:current_stop_sequence"`
+	StopID               *string     `gorm:"column:stop_id"`
+	Timestamp            *time.Time  `gorm:"column:timestamp"`
 }
