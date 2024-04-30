@@ -3,14 +3,17 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 	"strings"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/kantacky/gtfs-realtime-crawler/crawler"
-	"github.com/kantacky/gtfs-realtime-crawler/lib"
 )
 
 func main() {
+	godotenv.Load()
+
 	var (
 		url             = flag.String("url", "", "GTFS Realtime feed URL")
 		agencyID        = flag.String("agency", "", "Agency ID (UUID)")
@@ -19,15 +22,15 @@ func main() {
 	flag.Parse()
 
 	if *url == "" {
-		if lib.GetenvFromSecretfile("FEED_URL") != "" {
-			*url = lib.GetenvFromSecretfile("FEED_URL")
+		if os.Getenv("FEED_URL") != "" {
+			*url = os.Getenv("FEED_URL")
 		} else {
 			panic("url is required")
 		}
 	}
 	if *agencyID == "" {
-		if lib.GetenvFromSecretfile("AGENCY_ID") != "" {
-			*agencyID = lib.GetenvFromSecretfile("AGENCY_ID")
+		if os.Getenv("AGENCY_ID") != "" {
+			*agencyID = os.Getenv("AGENCY_ID")
 		} else {
 			panic("agency is required")
 		}

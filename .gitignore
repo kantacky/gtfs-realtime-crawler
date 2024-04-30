@@ -62,4 +62,4 @@ Temporary Items
 cert/
 env/
 tmp/
-.env
+.env*

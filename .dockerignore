@@ -1,8 +1,7 @@
 .git/
+cert/
 docs/
-env/
-proto/
-.env
+.env*
 .dockerignore
 .gitignore
 docker-compose.yml

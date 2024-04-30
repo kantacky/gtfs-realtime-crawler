@@ -3,7 +3,9 @@ package lib
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -18,36 +20,38 @@ const (
 )
 
 func GetSQLDB() (*sql.DB, error) {
-	dbHost := GetenvFromSecretfile("DB_HOST")
+	godotenv.Load()
+
+	dbHost := os.Getenv("DB_HOST")
 	if dbHost == "" {
 		dbHost = defaultDbHost
 	}
-	dbPort := GetenvFromSecretfile("DB_PORT")
+	dbPort := os.Getenv("DB_PORT")
 	if dbPort == "" {
 		dbPort = defaultDbPort
 	}
-	dbName := GetenvFromSecretfile("DB_NAME")
+	dbName := os.Getenv("DB_NAME")
 	if dbName == "" {
 		dbName = defaultDbName
 	}
-	dbUser := GetenvFromSecretfile("DB_USER")
+	dbUser := os.Getenv("DB_USER")
 	if dbUser == "" {
 		dbUser = defaultDbUser
 	}
-	dbPass := GetenvFromSecretfile("DB_PASS")
+	dbPass := os.Getenv("DB_PASS")
 	if dbPass == "" {
 		dbPass = defaultDbPass
 	}
 
 	uri := fmt.Sprintf("user=%s password=%s database=%s host=%s port=%s sslmode=require TimeZone=Asia/Tokyo", dbUser, dbPass, dbName, dbHost, dbPort)
 
-	dbRootCert := GetenvFromSecretfile("DB_ROOT_CERT")
+	dbRootCert := os.Getenv("DB_ROOT_CERT_PATH")
 	if dbRootCert != "" {
 		uri += fmt.Sprintf(" sslrootcert=%s", dbRootCert)
 	}
 
-	dbCert := GetenvFromSecretfile("DB_CERT")
-	dbKey := GetenvFromSecretfile("DB_KEY")
+	dbCert := os.Getenv("DB_CERT_PATH")
+	dbKey := os.Getenv("DB_KEY_PATH")
 	if dbRootCert != "" && dbCert != "" && dbKey != "" {
 		uri += fmt.Sprintf(" sslcert=%s sslkey=%s", dbCert, dbKey)
 	}
@@ -62,7 +66,7 @@ func GetSQLDB() (*sql.DB, error) {
 
 func GetGORMDB(db *sql.DB) (*gorm.DB, error) {
 	logMode := logger.Silent
-	if GetenvFromSecretfile("MODE") == "DEBUG" {
+	if os.Getenv("MODE") == "DEBUG" {
 		logMode = logger.Info
 	}
 
